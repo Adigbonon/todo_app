@@ -16,7 +16,7 @@ class Database {
 
   // load data from the database
   void loadData() {
-    toDoList = (_myhivebox.get("TODOLIST")).sort;
+    toDoList = (_myhivebox.get("TODOLIST"));
   }
 
   // update the database
