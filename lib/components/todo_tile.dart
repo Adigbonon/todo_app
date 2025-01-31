@@ -4,62 +4,84 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 class ToDoTile extends StatelessWidget {
   final String task_name;
   final bool task_completed;
-  Function(bool?)? onChanged;
-  Function(BuildContext)? updateTaskFunction;
-  Function(BuildContext)? deleteFunction;
+  final List<DateTime> task_dates; // Liste de dates
+  final String importance; // Degré d'importance
+  final Function(bool?) onChanged;
+  final Function(BuildContext) updateTaskFunction;
+  final Function(BuildContext) deleteFunction;
 
-  ToDoTile(
-      {super.key,
-      required this.task_name,
-      required this.task_completed,
-      required this.onChanged,
-      required this.updateTaskFunction,
-      this.deleteFunction});
+  const ToDoTile({
+    Key? key,
+    required this.task_name,
+    required this.task_completed,
+    required this.task_dates,
+    required this.importance,
+    required this.onChanged,
+    required this.updateTaskFunction,
+    required this.deleteFunction,
+  }) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    String formattedDates = task_dates
+        .map((date) => "📅 ${date.day}/${date.month}/${date.year} - 🕒 ${date.hour}:${date.minute}")
+        .join("\n"); // Affiche chaque date sur une nouvelle ligne
+
     return Padding(
-      padding: const EdgeInsets.only(left: 25, right: 25, top: 25),
+      padding: const EdgeInsets.symmetric(vertical: 4.0, horizontal: 8.0),
       child: Slidable(
-        endActionPane: ActionPane(
-          motion: StretchMotion(),
+        startActionPane: ActionPane(
+          motion: const StretchMotion(),
           children: [
             SlidableAction(
               onPressed: updateTaskFunction,
+              backgroundColor: Colors.blue,
               icon: Icons.edit,
-              backgroundColor: Colors.blue.shade300,
-              borderRadius: BorderRadius.circular(12),
+              label: 'Modifier',
             ),
+          ],
+        ),
+        endActionPane: ActionPane(
+          motion: const StretchMotion(),
+          children: [
             SlidableAction(
               onPressed: deleteFunction,
+              backgroundColor: Colors.red,
               icon: Icons.delete,
-              backgroundColor: Colors.red.shade300,
-              borderRadius: BorderRadius.circular(12),
-            )
+              label: 'Supprimer',
+            ),
           ],
         ),
         child: Container(
-          padding: EdgeInsets.all(24),
+          padding: EdgeInsets.all(10),
           decoration: BoxDecoration(
-              color: Colors.yellow, borderRadius: BorderRadius.circular(20)),
-          child: Row(
-            children: [
-              // checkbox
-              Checkbox(
-                value: task_completed,
-                onChanged: onChanged,
-                activeColor: Colors.black,
-              ),
-
-              // task name
-              Text(
-                task_name,
-                style: TextStyle(
-                    decoration: task_completed
-                        ? TextDecoration.lineThrough
-                        : TextDecoration.none),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(8),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black12,
+                spreadRadius: 1,
+                blurRadius: 4,
               ),
             ],
+          ),
+          child: ListTile(
+            title: Text(
+              task_name,
+              style: TextStyle(
+                decoration: task_completed ? TextDecoration.lineThrough : null,
+              ),
+            ),
+            subtitle: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(formattedDates, style: TextStyle(color: Colors.grey[700])),
+                if (importance.isNotEmpty)
+                  Text("⭐ Importance : $importance",
+                      style: TextStyle(fontWeight: FontWeight.bold, color: Colors.red)),
+              ],
+            ),
+            leading: Checkbox(value: task_completed, onChanged: onChanged),
           ),
         ),
       ),

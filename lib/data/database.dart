@@ -10,13 +10,14 @@ class Database {
   // if its first time ever opening the app
   void createInitialData() {
     toDoList = [
-      ["Start adding tasks", false]
+      ["Start adding tasks", false, [DateTime.now()], "Important"]
     ];
   }
 
   // load data from the database
   void loadData() {
     toDoList = (_myhivebox.get("TODOLIST"));
+    print("toDoList " + toDoList.toString());
   }
 
   // update the database
